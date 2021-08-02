@@ -2,15 +2,17 @@
   <Modal class="modal-card">
     <div slot="header" class="modal-card-header">
       <div class="modal-card-header-title">
-        <input class="form-control" type="text" :value="card.title" readonly>
+        <input class="form-control" type="text" :value="card.title"
+               :readonly="!toggleTitle" @click="toggleTitle=true" @blur="onBlurTitle"
+               ref="inputTitle">
       </div>
       <a class="modal-close-btn" href="" @click.prevent="onClose">&times;</a>
     </div>
     <div slot="body">
       <h3>Description</h3>
       <textarea  class="form-control" cols="30" rows="3" placeholder="Add a more detailed description..."
-                 readonly
-                 v-model="card.description"></textarea>
+                 :readonly="!toggleDesc" @click="toggleDesc=true" @blur="onBlurDesc"
+                 v-model="card.description" ref="inputDesc"></textarea>
     </div>
     <div slot="footer"></div>
   </Modal>
@@ -21,6 +23,12 @@
   import {mapState, mapActions} from 'vuex'
   export default {
     components: {Modal},
+    data() {
+      return {
+        toggleTitle: false,
+        toggleDesc: false
+      }
+    },
     computed: {
       ...mapState({
         card: 'card',
@@ -28,13 +36,18 @@
       })
     },
     created() {
-      const id = this.$route.params.cid
-      this.FETCH_CARD({id})
+      this.fetchCard()
     },
     methods: {
       ...mapActions([
-        'FETCH_CARD'
+        'FETCH_CARD',
+        'UPDATE_CARD'
       ]),
+      fetchCard() {
+        console.log('fetchcard')
+        const id = this.$route.params.cid
+        this.FETCH_CARD({id})
+      },
       onClose() {
         this.$router.push(`/b/${this.board.id}`)
       },
@@ -44,6 +57,11 @@
         if (!title) return
         this.UPDATE_CARD({id: this.card.id, title})
           .then(()=> this.fetchCard())
+      },
+      onBlurDesc() {
+        this.toggleDesc = false
+        const description = this.$refs.inputDesc.value.trim()
+        this.UPDATE_CARD({id: this.card.id, description})
       }
     }
   }
