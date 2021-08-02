@@ -14,14 +14,13 @@
         </a>
       </div>
     </div>
-    <AddBoard v-if="isAddBoard"/>
+    <AddBoard v-if="isAddBoard" />
   </div>
 </template>
 
 <script>
-  import {board} from '../api'
+  import {mapState, mapMutations, mapActions} from 'vuex'
   import AddBoard from './AddBoard.vue'
-  import {mapState, mapMutations, mapActions} from 'Vuex'
   export default {
     components: {
       AddBoard
@@ -29,7 +28,7 @@
     data() {
       return {
         loading: false,
-        error: '',
+        error: ''
       }
     },
     computed: {
@@ -40,6 +39,7 @@
     },
     created() {
       this.fetchData()
+      this.SET_THEME()
     },
     updated() {
       this.$refs.boardItem.forEach(el => {
@@ -48,7 +48,8 @@
     },
     methods: {
       ...mapMutations([
-        'SET_IS_ADD_BOARD'
+        'SET_IS_ADD_BOARD',
+        'SET_THEME'
       ]),
       ...mapActions([
         'FETCH_BOARDS'
@@ -58,7 +59,7 @@
         this.FETCH_BOARDS().finally(_=> {
           this.loading = false
         })
-      }
+      },
     }
   }
 </script>
